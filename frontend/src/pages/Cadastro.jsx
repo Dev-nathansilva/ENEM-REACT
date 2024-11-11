@@ -3,7 +3,7 @@ import axios from "axios";
 import { ChevronLeftIcon } from "@heroicons/react/24/solid"; // Versão 2
 
 const Cadastro = () => {
-  const baseUrl = "http://localhost:3000"; // URL base para o backend
+  const baseUrl = "https://backend-enem-production.up.railway.app"; // URL base para o backend
   const [cadernos, setCadernos] = useState([]);
   const [cadernoSelecionado, setCadernoSelecionado] = useState(null);
   const [questoes, setQuestoes] = useState([]);

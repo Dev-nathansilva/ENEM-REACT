@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 const Questoes = () => {
-  const baseUrl = "http://localhost:3000"; // URL base para o backend
+  const baseUrl = "https://backend-enem-production.up.railway.app"; // URL base para o backend
   const location = useLocation();
   const navigate = useNavigate();
   const { name, userId, caderno, cadernoCor } = location.state || {};
