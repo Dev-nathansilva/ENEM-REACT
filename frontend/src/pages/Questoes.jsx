@@ -5,6 +5,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ChevronLeftIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const Questoes = () => {
@@ -13,6 +14,8 @@ const Questoes = () => {
   const navigate = useNavigate();
   const { name, userId, caderno, cadernoCor } = location.state || {};
   const questoesRefs = useRef({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [sucessMessage, setSucessMessage] = useState("");
 
   useEffect(() => {
     if (!name || !userId || !cadernoCor || !caderno) {
@@ -89,7 +92,10 @@ const Questoes = () => {
     );
 
     if (questoesSemResposta.length > 0) {
-      alert("Por favor, responda todas as questões antes de salvar.");
+      setErrorMessage("Por favor, responda todas as questões antes de salvar.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
       const primeiraQuestaoSemRespostaId = questoesSemResposta[0].questao_id;
       questoesRefs.current[primeiraQuestaoSemRespostaId]?.scrollIntoView({
         behavior: "smooth",
@@ -111,11 +117,21 @@ const Questoes = () => {
     axios
       .post(`${baseUrl}/api/respostas`, respostasArray)
       .then(() => {
-        alert("Respostas salvas com sucesso!");
+        setSucessMessage("Respostas salvas com sucesso!");
+        setTimeout(() => {
+          setSucessMessage("");
+        }, 2000);
       })
       .catch((error) => {
         console.error("Erro ao salvar respostas:", error);
       });
+  };
+
+  const closeErrorAlert = () => {
+    setErrorMessage("");
+  };
+  const closeSucessAlert = () => {
+    setSucessMessage("");
   };
 
   return (
@@ -150,6 +166,14 @@ const Questoes = () => {
             {contador.corretas}/{contador.total}
           </span>
         </p>
+
+        <img
+          src="images/nathan-logo-2.svg"
+          alt="logo do nathan"
+          className="absolute bottom-12 right-7 hidden md:block"
+          width={"60px"}
+          height={"60px"}
+        />
       </div>
 
       <div className="max-w-[90vw] md:max-w-3xl space-y-4 mt-48">
@@ -227,6 +251,25 @@ const Questoes = () => {
       >
         Salvar Respostas
       </button>
+
+      {/* Alerta de erro */}
+      {errorMessage && (
+        <div className="errorAlert">
+          <span>{errorMessage}</span>
+          <button onClick={closeErrorAlert} className="closeButton">
+            <XMarkIcon className="h-6 w-6 text-white" />
+          </button>
+        </div>
+      )}
+      {/* Alerta de sucesso */}
+      {sucessMessage && (
+        <div className="sucessAlert">
+          <span>{sucessMessage}</span>
+          <button onClick={closeSucessAlert} className="closeButton">
+            <XMarkIcon className="h-6 w-6 text-white" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ChevronLeftIcon } from "@heroicons/react/24/solid"; // Versão 2
+import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/solid"; // Versão 2
 
 const Cadastro = () => {
   const baseUrl = "https://backend-enem-production.up.railway.app"; // URL base para o backend
@@ -8,6 +8,8 @@ const Cadastro = () => {
   const [cadernoSelecionado, setCadernoSelecionado] = useState(null);
   const [questoes, setQuestoes] = useState([]);
   const [novaQuestao, setNovaQuestao] = useState({ numero: "", letra: "" });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [sucessMessage, setSucessMessage] = useState("");
 
   // Carregar os cadernos ao montar o componente
   useEffect(() => {
@@ -31,11 +33,25 @@ const Cadastro = () => {
 
   const handleAdicionarQuestao = () => {
     if (!cadernoSelecionado) {
-      alert("Por favor, selecione um caderno antes de adicionar uma questão.");
+      setErrorMessage(
+        "Por favor, selecione um caderno antes de adicionar uma questão."
+      );
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
+      return;
+    }
+    const { numero, letra } = novaQuestao;
+
+    // Verificação dos campos 'numero' e 'letra'
+    if (!numero || !letra) {
+      setErrorMessage(
+        "Por favor, preencha os campos 'Número' e 'Letra' antes de adicionar a questão."
+      );
+      setTimeout(() => setErrorMessage(""), 2000); // Limpa a mensagem de erro após 2 segundos
       return;
     }
 
-    const { numero, letra } = novaQuestao;
     axios
       .post(`${baseUrl}/api/questoes/adicionar-questao`, {
         caderno_id: cadernoSelecionado,
@@ -55,6 +71,10 @@ const Cadastro = () => {
       .delete(`${baseUrl}/api/questoes/deletar-questao/${questaoId}`)
       .then(() => {
         setQuestoes(questoes.filter((q) => q.questao_id !== questaoId));
+        setSucessMessage("questão deletada com sucesso!");
+        setTimeout(() => {
+          setSucessMessage("");
+        }, 1000);
       })
       .catch((error) => console.error("Erro ao deletar questão:", error));
   };
@@ -73,8 +93,19 @@ const Cadastro = () => {
               : q
           )
         );
+        setSucessMessage("atualizada questão com sucesso!");
+        setTimeout(() => {
+          setSucessMessage("");
+        }, 1000);
       })
       .catch((error) => console.error("Erro ao atualizar questão:", error));
+  };
+
+  const closeErrorAlert = () => {
+    setErrorMessage("");
+  };
+  const closeSucessAlert = () => {
+    setSucessMessage("");
   };
 
   return (
@@ -225,6 +256,33 @@ const Cadastro = () => {
           </button>
         </div>
       </div>
+
+      <img
+        src="images/nathan-logo.svg"
+        alt="logo do nathan"
+        className="fixed bottom-4 right-4 hidden md:block"
+        width={"60px"}
+        height={"60px"}
+      />
+
+      {/* Alerta de erro */}
+      {errorMessage && (
+        <div className="errorAlert">
+          <span>{errorMessage}</span>
+          <button onClick={closeErrorAlert} className="closeButton">
+            <XMarkIcon className="h-6 w-6 text-white" />
+          </button>
+        </div>
+      )}
+      {/* Alerta de sucesso */}
+      {sucessMessage && (
+        <div className="sucessAlert">
+          <span>{sucessMessage}</span>
+          <button onClick={closeSucessAlert} className="closeButton">
+            <XMarkIcon className="h-6 w-6 text-white" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

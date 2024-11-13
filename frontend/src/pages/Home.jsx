@@ -17,6 +17,8 @@ const Home = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [showUsuarios, setShowUsuarios] = useState(false); // Estado para controlar a visibilidade da tabela
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [sucessMessage, setSucessMessage] = useState("");
 
   // Carregar os cadernos do backend
   useEffect(() => {
@@ -66,10 +68,18 @@ const Home = () => {
         })
         .catch((error) => {
           console.error("Erro ao salvar o usuário:", error);
-          alert("Erro ao salvar o usuário. Tente novamente.");
+          setErrorMessage("Erro ao salvar o usuário. Tente novamente.");
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 2000);
         });
     } else {
-      alert("Por favor, insira seu nome e selecione uma cor de caderno.");
+      setErrorMessage(
+        "Por favor, insira seu nome e selecione uma cor de caderno."
+      );
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
     }
   };
 
@@ -86,21 +96,34 @@ const Home = () => {
   const handleDeletarUsuario = (usuarioId) => {
     axios
       .delete(`${baseUrl}/api/usuarios/${usuarioId}`)
-      .then((response) => {
+      .then(() => {
         setUsuarios(
           usuarios.filter((usuario) => usuario.user_id !== usuarioId)
         );
-        console.log(response);
+        setSucessMessage("usuário deletado com sucesso!");
+        setTimeout(() => {
+          setSucessMessage("");
+        }, 1000);
       })
       .catch((error) => {
         console.error("Erro ao deletar o usuário:", error);
-        alert("Erro ao deletar o usuário. Tente novamente.", error);
+        setErrorMessage("Erro ao deletar o usuário. Tente novamente.");
+        setTimeout(() => {
+          setErrorMessage("");
+        }, 2000);
       });
   };
 
   // Função para alternar a visibilidade da tabela
   const toggleUsuarios = () => {
     setShowUsuarios(!showUsuarios);
+  };
+
+  const closeErrorAlert = () => {
+    setErrorMessage("");
+  };
+  const closeSucessAlert = () => {
+    setSucessMessage("");
   };
 
   return (
@@ -265,6 +288,34 @@ const Home = () => {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      <img
+        src="images/nathan-logo.svg"
+        alt="logo do nathan"
+        className="fixed bottom-4 right-4"
+        width={"60px"}
+        height={"60px"}
+      />
+
+      {/* Alerta de erro */}
+      {errorMessage && (
+        <div className="errorAlert">
+          <span>{errorMessage}</span>
+          <button onClick={closeErrorAlert} className="closeButton">
+            <XMarkIcon className="h-6 w-6 text-white" />
+          </button>
+        </div>
+      )}
+
+      {/* Alerta de sucesso */}
+      {sucessMessage && (
+        <div className="sucessAlert">
+          <span>{sucessMessage}</span>
+          <button onClick={closeSucessAlert} className="closeButton">
+            <XMarkIcon className="h-6 w-6 text-white" />
+          </button>
         </div>
       )}
     </div>
