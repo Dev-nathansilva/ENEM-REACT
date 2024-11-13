@@ -90,27 +90,49 @@ router.post("/adicionar-questao", (req, res) => {
 router.delete("/deletar-questao/:questaoId", (req, res) => {
   const { questaoId } = req.params;
 
-  // Deletar a alternativa da questão (opções)
-  db.query(`DELETE FROM opcoes WHERE questao_id = ?`, [questaoId], (err1) => {
-    if (err1) {
-      console.error("Erro ao deletar alternativa:", err1);
-      return res.status(500).json({ message: "Erro ao deletar alternativa." });
-    }
-
-    // Deletar a questão
-    db.query(
-      `DELETE FROM questoes WHERE questao_id = ?`,
-      [questaoId],
-      (err2) => {
-        if (err2) {
-          console.error("Erro ao deletar questão:", err2);
-          return res.status(500).json({ message: "Erro ao deletar questão." });
-        }
-
-        res.status(200).json({ message: "Questão deletada com sucesso!" });
+  // Deletar as respostas relacionadas à questão
+  db.query(
+    `DELETE FROM respostas WHERE questao_id = ?`,
+    [questaoId],
+    (err0) => {
+      if (err0) {
+        console.error("Erro ao deletar respostas:", err0);
+        return res.status(500).json({ message: "Erro ao deletar respostas." });
       }
-    );
-  });
+
+      // Deletar as alternativas da questão (opções)
+      db.query(
+        `DELETE FROM opcoes WHERE questao_id = ?`,
+        [questaoId],
+        (err1) => {
+          if (err1) {
+            console.error("Erro ao deletar alternativa:", err1);
+            return res
+              .status(500)
+              .json({ message: "Erro ao deletar alternativa." });
+          }
+
+          // Deletar a questão
+          db.query(
+            `DELETE FROM questoes WHERE questao_id = ?`,
+            [questaoId],
+            (err2) => {
+              if (err2) {
+                console.error("Erro ao deletar questão:", err2);
+                return res
+                  .status(500)
+                  .json({ message: "Erro ao deletar questão." });
+              }
+
+              res
+                .status(200)
+                .json({ message: "Questão deletada com sucesso!" });
+            }
+          );
+        }
+      );
+    }
+  );
 });
 
 // Rota para atualizar uma questão
@@ -164,11 +186,9 @@ router.put("/atualizar-questao/:questaoId", (req, res) => {
                   .json({ message: "Erro ao atualizar o status da resposta." });
               }
 
-              res
-                .status(200)
-                .json({
-                  message: "Questão e respostas atualizadas com sucesso!",
-                });
+              res.status(200).json({
+                message: "Questão e respostas atualizadas com sucesso!",
+              });
             }
           );
         }

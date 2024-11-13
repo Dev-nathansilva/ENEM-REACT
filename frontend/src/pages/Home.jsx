@@ -10,6 +10,7 @@ import {
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 
 const Home = () => {
+  //  http://localhost:3000
   const baseUrl = "https://backend-enem-production.up.railway.app"; // URL base para o backend
   const [name, setName] = useState("");
   const [caderno, setCaderno] = useState("");
