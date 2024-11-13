@@ -121,18 +121,24 @@ const Questoes = () => {
   return (
     <div className="flex flex-col items-center justify-start h-screen overflow-auto bg-gray-900 pt-6 pb-16">
       <div
-        className="w-full max-w-3xl bg-gradient-to-r from-green-500 to-green-900 p-6 rounded-lg shadow-lg text-center mb-8 fixed"
+        className=" w-[90vw] md:w-full md:max-w-3xl bg-gradient-to-r from-green-500 to-green-900 p-6 rounded-lg shadow-lg text-center mb-8 fixed"
         style={{
           boxShadow: "0px -18px 20px 20px #111827",
         }}
       >
         <button
           onClick={() => navigate("/")}
-          className="absolute top-[53px] left-6 p-2 bg-gray-900 text-white rounded-full hover:bg-gray-600 transition-colors"
+          className="hidden md:block absolute top-[53px] left-6 p-2 bg-gray-900 text-white rounded-full hover:bg-gray-600 transition-colors"
         >
           <ChevronLeftIcon className="w-6 h-6" />
         </button>
-
+        <button
+          onClick={() => navigate("/")}
+          className=" flex mx-auto mt-[-20px] p-2 text-white rounded-full hover:bg-gray-600 transition-colors md:hidden"
+        >
+          <ChevronLeftIcon className="w-6 h-6" />
+          Voltar
+        </button>
         <h1 className="text-3xl font-bold text-white mb-2">{`Bem-vindo, ${name}`}</h1>
         <p className="text-lg text-gray-200 mb-1">
           Cor do caderno:{" "}
@@ -146,14 +152,14 @@ const Questoes = () => {
         </p>
       </div>
 
-      <div className="max-w-3xl space-y-4 mt-48">
+      <div className="max-w-[90vw] md:max-w-3xl space-y-4 mt-48">
         {questoes.map((questao) => (
           <div
             key={questao.questao_id}
             ref={(el) => (questoesRefs.current[questao.questao_id] = el)}
             className="flex flex-col items-center gap-4 p-6 bg-gray-800 rounded-lg shadow-md"
           >
-            <div className="flex gap-8 items-center w-full border-b border-gray-700 pb-4">
+            <div className="flex flex-col md:flex-row gap-8 items-center w-full border-b border-gray-700 pb-4">
               <div className="text-lg font-semibold text-gray-100">
                 Questão {questao.numero}
               </div>
